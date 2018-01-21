@@ -1,6 +1,8 @@
 package com.danesfeder.popcorn.list;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -8,15 +10,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.danesfeder.popcorn.R;
+import com.danesfeder.popcorn.network.FetchMoviesTask;
+import com.danesfeder.popcorn.network.Movie;
 
-public class MovieListActivity extends AppCompatActivity {
+import java.util.List;
+
+public class MovieListActivity extends AppCompatActivity implements FetchMoviesTask.MoviesLoadedListener {
 
   private RecyclerView rvMovies;
   private SwipeRefreshLayout refreshLayout;
+  private ProgressBar progressBar;
   private BottomNavigationView navigation;
   private MovieAdapter movieAdapter;
+
+  private int taskType = FetchMoviesTask.POPULAR;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -25,10 +36,32 @@ public class MovieListActivity extends AppCompatActivity {
     init();
   }
 
+  @Override
+  protected void onPause() {
+    super.onPause();
+    saveSharedPreferences();
+  }
+
+  @Override
+  public void onMoviesLoaded(List<Movie> movies) {
+    // Hide main progress bar
+    if (progressBar.getVisibility() == View.VISIBLE) {
+      progressBar.setVisibility(View.INVISIBLE);
+    }
+    // Hide refresh layout if refreshing
+    if (refreshLayout.isRefreshing()) {
+      refreshLayout.setRefreshing(false);
+    }
+    // Update the adapter with the new movies
+    movieAdapter.updateMovieList(movies);
+  }
+
   private void init() {
     bind();
     initRecyclerView();
-    initClickListeners();
+    initListeners();
+    extractSharedPreferences();
+    fetchMovies(taskType);
   }
 
   /**
@@ -37,6 +70,7 @@ public class MovieListActivity extends AppCompatActivity {
   private void bind() {
     rvMovies = findViewById(R.id.rv_movies);
     refreshLayout = findViewById(R.id.refresh_layout);
+    progressBar = findViewById(R.id.pb_content_loading);
     navigation = findViewById(R.id.navigation);
   }
 
@@ -51,17 +85,57 @@ public class MovieListActivity extends AppCompatActivity {
     rvMovies.setHasFixedSize(true);
   }
 
-  private void initClickListeners() {
+  /**
+   * Sets up all listeners needed for the activity UI.
+   */
+  private void initListeners() {
     refreshLayout.setOnRefreshListener(refreshListener);
     navigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
   }
 
+  /**
+   * Looks at {@link SharedPreferences} and extracts any configuration data.
+   * If none is found, provides defaults for the first app start.
+   */
+  private void extractSharedPreferences() {
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+    taskType = preferences.getInt(getString(R.string.preference_task_type), FetchMoviesTask.POPULAR);
+    navigation.setSelectedItemId(preferences.getInt(getString(R.string.preference_navigation_position), 0));
+  }
+
+  /**
+   * Saves the current task type and selected navigation item to
+   * restore next time the application is started.
+   */
+  private void saveSharedPreferences() {
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+    SharedPreferences.Editor editor = preferences.edit();
+    editor.putInt(getString(R.string.preference_task_type), taskType);
+    editor.putInt(getString(R.string.preference_navigation_position), navigation.getSelectedItemId());
+    editor.apply();
+  }
+
+  /**
+   * Fetches a current list of movies based on the task type provided.
+   * <p>
+   * Returns a successful list to the {@link FetchMoviesTask.MoviesLoadedListener} implemented
+   * by this class.
+   */
+  private void fetchMovies(int taskType) {
+    // Show loading
+    progressBar.setVisibility(View.VISIBLE);
+    // Scroll rv to the top of the list
+    rvMovies.smoothScrollToPosition(0);
+    // Fetch popular movies
+    this.taskType = taskType;
+    new FetchMoviesTask(taskType, this).execute();
+  }
+
   private final SwipeRefreshLayout.OnRefreshListener refreshListener
     = new SwipeRefreshLayout.OnRefreshListener() {
-
     @Override
     public void onRefresh() {
-      // TODO load movies again
+      fetchMovies(taskType);
     }
   };
 
@@ -71,8 +145,10 @@ public class MovieListActivity extends AppCompatActivity {
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
       switch (item.getItemId()) {
         case R.id.navigation_popular:
+          fetchMovies(FetchMoviesTask.POPULAR);
           return true;
         case R.id.navigation_rating:
+          fetchMovies(FetchMoviesTask.TOP_RATED);
           return true;
       }
       return false;

@@ -8,6 +8,16 @@
     android:layout_height="match_parent"
     tools:context="com.danesfeder.popcorn.list.MovieListActivity">
 
+    <ProgressBar
+        android:id="@+id/pb_content_loading"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:indeterminate="true"
+        app:layout_constraintBottom_toTopOf="@+id/navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <android.support.v4.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/refresh_layout"
