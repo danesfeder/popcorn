@@ -1,13 +1,15 @@
 package com.danesfeder.popcorn.network;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Movie {
+public class Movie implements Parcelable {
 
   public static final String LOG_TAG = Movie.class.getSimpleName();
 
@@ -97,4 +99,43 @@ public class Movie {
         return "w500";
     }
   }
+
+  // Parcelable implementation
+  private Movie(Parcel in) {
+    id = in.readLong();
+    title = in.readString();
+    posterUrl = in.readString();
+    overview = in.readString();
+    rating = in.readString();
+    releaseDate = in.readString();
+    backdropUrl = in.readString();
+  }
+
+  @Override
+  public void writeToParcel(Parcel dest, int flags) {
+    dest.writeLong(id);
+    dest.writeString(title);
+    dest.writeString(posterUrl);
+    dest.writeString(overview);
+    dest.writeString(rating);
+    dest.writeString(releaseDate);
+    dest.writeString(backdropUrl);
+  }
+
+  @Override
+  public int describeContents() {
+    return 0;
+  }
+
+  public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+    @Override
+    public Movie createFromParcel(Parcel in) {
+      return new Movie(in);
+    }
+
+    @Override
+    public Movie[] newArray(int size) {
+      return new Movie[size];
+    }
+  };
 }

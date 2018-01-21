@@ -11,19 +11,22 @@ import com.danesfeder.popcorn.network.Movie;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> {
+public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> implements
+  MovieViewHolder.ViewHolderClickListener {
 
   private List<Movie> movieList;
+  private MovieClickListener listener;
 
-  MovieAdapter() {
+  MovieAdapter(MovieClickListener listener) {
     movieList = new ArrayList<>();
+    this.listener = listener;
   }
 
   @Override
   public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
       .inflate(R.layout.movie_viewholder_layout, parent, false);
-    return new MovieViewHolder(view);
+    return new MovieViewHolder(view, this);
   }
 
   @Override
@@ -35,6 +38,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> {
   @Override
   public int getItemCount() {
     return movieList.size();
+  }
+
+  @Override
+  public void onViewHolderClick(int position) {
+    Movie clickedMovie = movieList.get(position);
+    listener.onMovieClick(clickedMovie);
   }
 
   void updateMovieList(List<Movie> movies) {

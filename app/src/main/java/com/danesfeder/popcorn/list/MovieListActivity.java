@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.danesfeder.popcorn.R;
 import com.danesfeder.popcorn.network.FetchMoviesTask;
@@ -19,7 +20,8 @@ import com.danesfeder.popcorn.network.Movie;
 
 import java.util.List;
 
-public class MovieListActivity extends AppCompatActivity implements FetchMoviesTask.MoviesLoadedListener {
+public class MovieListActivity extends AppCompatActivity implements FetchMoviesTask.MoviesLoadedListener,
+  MovieClickListener {
 
   private RecyclerView rvMovies;
   private SwipeRefreshLayout refreshLayout;
@@ -56,6 +58,11 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
     movieAdapter.updateMovieList(movies);
   }
 
+  @Override
+  public void onMovieClick(Movie clickedMovie) {
+    Toast.makeText(this, clickedMovie.getTitle(), Toast.LENGTH_SHORT).show();
+  }
+
   private void init() {
     bind();
     initRecyclerView();
@@ -79,7 +86,7 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
    * display the movies.
    */
   private void initRecyclerView() {
-    movieAdapter = new MovieAdapter();
+    movieAdapter = new MovieAdapter(this);
     rvMovies.setAdapter(movieAdapter);
     rvMovies.setLayoutManager(new GridLayoutManager(this, 2));
     rvMovies.setHasFixedSize(true);
