@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import com.danesfeder.popcorn.R;
 import com.squareup.picasso.Picasso;
 
-class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
   private ImageView movieImageView;
   private ViewHolderClickListener listener;

@@ -3,6 +3,10 @@
     <string name="title_popular">Popular</string>
     <string name="title_rating">Rating</string>
     <string name="content_description_movie_image">Movie Image</string>
+
+    <!-- Not translatable -->
     <string name="preference_task_type">current_task_type</string>
     <string name="preference_navigation_position">current_navigation_position</string>
+    <string name="movie_detail_extra">movie_detail_extra</string>
+    <string name="rating">Rating:</string>
 </resources>

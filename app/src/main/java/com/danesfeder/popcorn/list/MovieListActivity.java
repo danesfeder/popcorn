@@ -1,5 +1,6 @@
 package com.danesfeder.popcorn.list;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,9 +13,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.danesfeder.popcorn.R;
+import com.danesfeder.popcorn.detail.MovieDetailActivity;
 import com.danesfeder.popcorn.network.FetchMoviesTask;
 import com.danesfeder.popcorn.network.Movie;
 
@@ -30,6 +31,28 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
   private MovieAdapter movieAdapter;
 
   private int taskType = FetchMoviesTask.POPULAR;
+  private final SwipeRefreshLayout.OnRefreshListener refreshListener
+    = new SwipeRefreshLayout.OnRefreshListener() {
+    @Override
+    public void onRefresh() {
+      fetchMovies(taskType);
+    }
+  };
+  private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener
+    = new BottomNavigationView.OnNavigationItemSelectedListener() {
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+      switch (item.getItemId()) {
+        case R.id.navigation_popular:
+          fetchMovies(FetchMoviesTask.POPULAR);
+          return true;
+        case R.id.navigation_rating:
+          fetchMovies(FetchMoviesTask.TOP_RATED);
+          return true;
+      }
+      return false;
+    }
+  };
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +83,14 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
 
   @Override
   public void onMovieClick(Movie clickedMovie) {
-    Toast.makeText(this, clickedMovie.getTitle(), Toast.LENGTH_SHORT).show();
+    launchDetailActivity(clickedMovie);
+  }
+
+  private void launchDetailActivity(Movie clickedMovie) {
+    Intent movieDetails = new Intent(this, MovieDetailActivity.class);
+    movieDetails.putExtra(getString(R.string.movie_detail_extra), clickedMovie);
+    startActivity(movieDetails);
+
   }
 
   private void init() {
@@ -137,28 +167,4 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
     this.taskType = taskType;
     new FetchMoviesTask(taskType, this).execute();
   }
-
-  private final SwipeRefreshLayout.OnRefreshListener refreshListener
-    = new SwipeRefreshLayout.OnRefreshListener() {
-    @Override
-    public void onRefresh() {
-      fetchMovies(taskType);
-    }
-  };
-
-  private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener
-    = new BottomNavigationView.OnNavigationItemSelectedListener() {
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-      switch (item.getItemId()) {
-        case R.id.navigation_popular:
-          fetchMovies(FetchMoviesTask.POPULAR);
-          return true;
-        case R.id.navigation_rating:
-          fetchMovies(FetchMoviesTask.TOP_RATED);
-          return true;
-      }
-      return false;
-    }
-  };
 }

@@ -12,7 +12,17 @@ import com.google.gson.annotations.SerializedName;
 public class Movie implements Parcelable {
 
   public static final String LOG_TAG = Movie.class.getSimpleName();
+  public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+    @Override
+    public Movie createFromParcel(Parcel in) {
+      return new Movie(in);
+    }
 
+    @Override
+    public Movie[] newArray(int size) {
+      return new Movie[size];
+    }
+  };
   @SerializedName("id")
   private long id;
   @SerializedName("original_title")
@@ -28,15 +38,15 @@ public class Movie implements Parcelable {
   @SerializedName("backdrop_path")
   private String backdropUrl;
 
-  public Movie(long id, String title, String posterUrl, String overview, String rating,
-               String releaseDate, String backdropUrl) {
-    this.id = id;
-    this.title = title;
-    this.posterUrl = posterUrl;
-    this.overview = overview;
-    this.rating = rating;
-    this.releaseDate = releaseDate;
-    this.backdropUrl = backdropUrl;
+  // Parcelable implementation
+  private Movie(Parcel in) {
+    id = in.readLong();
+    title = in.readString();
+    posterUrl = in.readString();
+    overview = in.readString();
+    rating = in.readString();
+    releaseDate = in.readString();
+    backdropUrl = in.readString();
   }
 
   public long getId() {
@@ -56,8 +66,8 @@ public class Movie implements Parcelable {
     return overview;
   }
 
-  public String getRating() {
-    return rating;
+  public float getRating() {
+    return (Float.valueOf(rating) / 10) * 5;
   }
 
   public String getReleaseDate() {
@@ -100,17 +110,6 @@ public class Movie implements Parcelable {
     }
   }
 
-  // Parcelable implementation
-  private Movie(Parcel in) {
-    id = in.readLong();
-    title = in.readString();
-    posterUrl = in.readString();
-    overview = in.readString();
-    rating = in.readString();
-    releaseDate = in.readString();
-    backdropUrl = in.readString();
-  }
-
   @Override
   public void writeToParcel(Parcel dest, int flags) {
     dest.writeLong(id);
@@ -126,16 +125,4 @@ public class Movie implements Parcelable {
   public int describeContents() {
     return 0;
   }
-
-  public static final Creator<Movie> CREATOR = new Creator<Movie>() {
-    @Override
-    public Movie createFromParcel(Parcel in) {
-      return new Movie(in);
-    }
-
-    @Override
-    public Movie[] newArray(int size) {
-      return new Movie[size];
-    }
-  };
 }
