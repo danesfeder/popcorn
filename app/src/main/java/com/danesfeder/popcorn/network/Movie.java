@@ -9,20 +9,14 @@ import android.util.DisplayMetrics;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class Movie implements Parcelable {
 
-  public static final String LOG_TAG = Movie.class.getSimpleName();
-  public static final Creator<Movie> CREATOR = new Creator<Movie>() {
-    @Override
-    public Movie createFromParcel(Parcel in) {
-      return new Movie(in);
-    }
-
-    @Override
-    public Movie[] newArray(int size) {
-      return new Movie[size];
-    }
-  };
   @SerializedName("id")
   private long id;
   @SerializedName("original_title")
@@ -37,17 +31,6 @@ public class Movie implements Parcelable {
   private String releaseDate;
   @SerializedName("backdrop_path")
   private String backdropUrl;
-
-  // Parcelable implementation
-  private Movie(Parcel in) {
-    id = in.readLong();
-    title = in.readString();
-    posterUrl = in.readString();
-    overview = in.readString();
-    rating = in.readString();
-    releaseDate = in.readString();
-    backdropUrl = in.readString();
-  }
 
   public long getId() {
     return id;
@@ -66,12 +49,25 @@ public class Movie implements Parcelable {
     return overview;
   }
 
-  public float getRating() {
-    return (Float.valueOf(rating) / 10) * 5;
+  public String getReleaseDate() {
+    if (TextUtils.isEmpty(releaseDate)) {
+      return "";
+    }
+
+    String inputPattern = "yyyy-MM-dd";
+    SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern, Locale.getDefault());
+    Date date;
+    try {
+      date = inputFormat.parse(releaseDate);
+      return DateFormat.getDateInstance().format(date);
+    } catch (ParseException e) {
+      e.printStackTrace();
+      return releaseDate;
+    }
   }
 
-  public String getReleaseDate() {
-    return releaseDate;
+  public float getRating() {
+    return (Float.valueOf(rating) / 10) * 5;
   }
 
   @Nullable
@@ -109,6 +105,29 @@ public class Movie implements Parcelable {
         return "w500";
     }
   }
+
+  // Parcelable implementation
+  private Movie(Parcel in) {
+    id = in.readLong();
+    title = in.readString();
+    posterUrl = in.readString();
+    overview = in.readString();
+    rating = in.readString();
+    releaseDate = in.readString();
+    backdropUrl = in.readString();
+  }
+
+  public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+    @Override
+    public Movie createFromParcel(Parcel in) {
+      return new Movie(in);
+    }
+
+    @Override
+    public Movie[] newArray(int size) {
+      return new Movie[size];
+    }
+  };
 
   @Override
   public void writeToParcel(Parcel dest, int flags) {

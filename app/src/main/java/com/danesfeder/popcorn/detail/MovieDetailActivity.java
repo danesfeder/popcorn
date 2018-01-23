@@ -2,7 +2,6 @@ package com.danesfeder.popcorn.detail;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -35,7 +34,6 @@ public class MovieDetailActivity extends AppCompatActivity {
     movieTitleTextView.setText(movie.getTitle());
     movieOverviewTextView.setText(movie.getOverview());
     movieReleaseDate.setText(movie.getReleaseDate());
-    Log.d("DetailActivity", "Rating: " + movie.getRating());
     movieRatingBar.setRating(movie.getRating());
   }
 
