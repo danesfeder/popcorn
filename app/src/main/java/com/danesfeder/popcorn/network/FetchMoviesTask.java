@@ -75,6 +75,7 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, List<Movie>> {
   protected void onPostExecute(List<Movie> movies) {
     if (movies == null || movies.isEmpty()) {
       Log.e(LOG_TAG, "An error occurred retrieving the movies - movie list is null or empty");
+      return;
     }
     // Valid list, pass to listener
     if (listener != null) {

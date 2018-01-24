@@ -1,12 +1,17 @@
 package com.danesfeder.popcorn.list;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -136,6 +141,8 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
    * by this class.
    */
   private void fetchMovies(int taskType) {
+    // Check for an internet connection
+    checkInternetConnection();
     // Show loading
     progressBar.setVisibility(View.VISIBLE);
     // Scroll rv to the top of the list
@@ -143,6 +150,40 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
     // Fetch popular movies
     this.taskType = taskType;
     new FetchMoviesTask(taskType, this).execute();
+  }
+
+  private void checkInternetConnection() {
+    ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+    // Make sure a manager was found
+    if (manager == null) {
+      return;
+    }
+
+    NetworkInfo activeNetwork = manager.getActiveNetworkInfo();
+    boolean isConnected = activeNetwork != null &&
+      activeNetwork.isConnectedOrConnecting();
+
+    if (!isConnected) {
+      showConnectivityDialog();
+    }
+  }
+
+  private void showConnectivityDialog() {
+    new AlertDialog.Builder(this)
+      .setTitle(R.string.internet_connection_title)
+      .setMessage(R.string.internet_connection_message)
+      .setPositiveButton(R.string.button_text_try_again, new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) {
+          fetchMovies(taskType);
+        }
+      })
+      .setNegativeButton(R.string.button_text_dismiss, new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) {
+          dialog.dismiss();
+        }
+      })
+      .setIcon(android.R.drawable.ic_dialog_alert)
+      .show();
   }
 
   private final SwipeRefreshLayout.OnRefreshListener refreshListener
