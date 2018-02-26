@@ -1,11 +1,12 @@
 package com.danesfeder.popcorn.movies.detail;
 
+import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.danesfeder.popcorn.R;
 import com.danesfeder.popcorn.movies.list.network.Movie;
 import com.squareup.picasso.Picasso;
@@ -17,7 +18,7 @@ public class MovieDetailActivity extends AppCompatActivity {
   private TextView movieTitleTextView;
   private TextView movieOverviewTextView;
   private TextView movieReleaseDate;
-  private RatingBar movieRatingBar;
+  private LottieAnimationView movieRatingBar;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +31,16 @@ public class MovieDetailActivity extends AppCompatActivity {
     setMovieDetails(movie);
   }
 
-  private void setMovieDetails(Movie movie) {
+  private void setMovieDetails(final Movie movie) {
     movieTitleTextView.setText(movie.getTitle());
     movieOverviewTextView.setText(movie.getOverview());
     movieReleaseDate.setText(movie.getReleaseDate());
-    movieRatingBar.setRating(movie.getRating());
+
+    float rating = movie.getRating();
+    ValueAnimator animator = ValueAnimator.ofFloat(0f, rating)
+      .setDuration(1500);
+    animator.addUpdateListener(animation -> movieRatingBar.setProgress((Float) animation.getAnimatedValue()));
+    animator.start();
   }
 
   private void bind() {
@@ -54,6 +60,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     Picasso.with(this).load(movie.getBackdropUrl(this))
       .fit()
+      .centerCrop()
       .error(R.drawable.ic_error)
       .into(movieBackdropImageView);
   }

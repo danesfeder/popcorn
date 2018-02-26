@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 
 import com.danesfeder.popcorn.R;
 import com.danesfeder.popcorn.movies.detail.MovieDetailActivity;
+import com.danesfeder.popcorn.movies.favorite.MovieFavoritesActivity;
 import com.danesfeder.popcorn.movies.list.network.FetchMoviesTask;
 import com.danesfeder.popcorn.movies.list.network.Movie;
 
@@ -134,6 +135,11 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
     startActivity(movieDetails);
   }
 
+  private void launchFavoritesActivity() {
+    Intent movieFavorites = new Intent(this, MovieFavoritesActivity.class);
+    startActivity(movieFavorites);
+  }
+
   /**
    * Fetches a current list of movies based on the task type provided.
    * <p>
@@ -143,8 +149,10 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
   private void fetchMovies(int taskType) {
     // Check for an internet connection
     checkInternetConnection();
-    // Show loading
-    progressBar.setVisibility(View.VISIBLE);
+    // Show loading (don't show if from refresh)
+    if (!refreshLayout.isRefreshing()) {
+      progressBar.setVisibility(View.VISIBLE);
+    }
     // Scroll rv to the top of the list
     rvMovies.smoothScrollToPosition(0);
     // Fetch popular movies
@@ -204,6 +212,9 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
           return true;
         case R.id.navigation_rating:
           fetchMovies(FetchMoviesTask.TOP_RATED);
+          return true;
+        case R.id.navigation_favorites:
+          launchFavoritesActivity();
           return true;
       }
       return false;

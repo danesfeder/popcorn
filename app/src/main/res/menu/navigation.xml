@@ -11,4 +11,9 @@
         android:icon="@drawable/ic_stars"
         android:title="@string/title_rating"/>
 
+    <item
+        android:id="@+id/navigation_favorites"
+        android:icon="@drawable/ic_favorite"
+        android:title="@string/title_rating"/>
+
 </menu>

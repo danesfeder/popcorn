@@ -29,6 +29,11 @@
             android:name=".movies.detail.MovieDetailActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
+        <!-- Used to display movie favorites -->
+        <activity
+            android:name=".movies.favorite.MovieFavoritesActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+
     </application>
 
 </manifest>

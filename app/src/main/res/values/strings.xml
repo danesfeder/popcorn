@@ -2,6 +2,7 @@
     <string name="app_name">Popcorn</string>
     <string name="title_popular">Popular</string>
     <string name="title_rating">Rating</string>
+    <string name="title_favorite">Favorites</string>
     <string name="content_description_movie_image">Movie Image</string>
     <string name="rating">Rating:</string>
     <string name="internet_connection_title">No Internet Connection</string>

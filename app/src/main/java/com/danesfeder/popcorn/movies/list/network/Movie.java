@@ -67,7 +67,7 @@ public class Movie implements Parcelable {
   }
 
   public float getRating() {
-    return (Float.valueOf(rating) / 10) * 5;
+    return Float.valueOf(rating) / 10;
   }
 
   @Nullable
