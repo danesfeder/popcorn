@@ -1,4 +1,4 @@
-package com.danesfeder.popcorn.detail;
+package com.danesfeder.popcorn.movies.detail;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,7 +7,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.danesfeder.popcorn.R;
-import com.danesfeder.popcorn.network.Movie;
+import com.danesfeder.popcorn.movies.list.network.Movie;
 import com.squareup.picasso.Picasso;
 
 public class MovieDetailActivity extends AppCompatActivity {
@@ -49,13 +49,11 @@ public class MovieDetailActivity extends AppCompatActivity {
   private void loadMovieImages(Movie movie) {
     Picasso.with(this).load(movie.getPosterUrl(this))
       .fit()
-      .centerCrop()
       .error(R.drawable.ic_error)
       .into(moviePosterImageView);
 
     Picasso.with(this).load(movie.getBackdropUrl(this))
       .fit()
-      .centerCrop()
       .error(R.drawable.ic_error)
       .into(movieBackdropImageView);
   }

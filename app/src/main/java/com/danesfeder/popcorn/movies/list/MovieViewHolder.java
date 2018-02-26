@@ -1,4 +1,4 @@
-package com.danesfeder.popcorn.list;
+package com.danesfeder.popcorn.movies.list;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -30,7 +30,6 @@ class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
     Picasso.with(movieImageView.getContext())
       .load(movieUrl)
       .fit()
-      .centerCrop()
       .error(R.drawable.ic_error)
       .into(movieImageView);
   }
