@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.danesfeder.popcorn.R;
 import com.danesfeder.popcorn.movies.detail.MovieDetailActivity;
@@ -68,6 +69,11 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
   @Override
   public void onMovieClick(Movie clickedMovie) {
     launchDetailActivity(clickedMovie);
+  }
+
+  @Override
+  public void onMovieFavorite(Movie favoriteMovie) {
+    Toast.makeText(this, favoriteMovie.getTitle(), Toast.LENGTH_SHORT).show();
   }
 
   private void init() {

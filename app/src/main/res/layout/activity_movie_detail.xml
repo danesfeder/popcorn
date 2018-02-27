@@ -42,7 +42,7 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
-            android:id="@+id/tv_movie_title"
+            android:id="@+id/tv_movie_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -65,7 +65,7 @@
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/cardView"
-            app:layout_constraintTop_toBottomOf="@+id/tv_movie_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_movie_date"
             tools:text="Release Date: 01/01/2018"/>
 
         <TextView
@@ -82,17 +82,20 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_movie_release_date"
             app:layout_constraintVertical_bias="0.0"/>
 
-        <com.airbnb.lottie.LottieAnimationView
+        <RatingBar
             android:id="@+id/rb_movie_rating"
-            android:layout_width="125dp"
-            android:layout_height="40dp"
+            style="?android:attr/ratingBarStyleIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/textView"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:stepSize=".5"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/textView"
-            app:layout_constraintTop_toTopOf="@+id/textView"
-            app:lottie_fileName="favorites.json"/>
+            app:layout_constraintStart_toEndOf="@+id/cardView"/>
 
         <TextView
             android:id="@+id/tv_movie_overview"

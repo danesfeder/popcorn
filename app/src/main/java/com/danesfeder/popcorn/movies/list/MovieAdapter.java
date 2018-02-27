@@ -33,6 +33,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> implemen
   public void onBindViewHolder(MovieViewHolder holder, int position) {
     Movie movie = movieList.get(position);
     holder.setMovieImage(movie.getPosterUrl(holder.itemView.getContext()));
+    holder.setMovieRating(movie.getRating());
   }
 
   @Override
@@ -44,6 +45,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> implemen
   public void onViewHolderClick(int position) {
     Movie clickedMovie = movieList.get(position);
     listener.onMovieClick(clickedMovie);
+  }
+
+  @Override
+  public void onViewHolderFavorite(int position) {
+    Movie favoriteMovie = movieList.get(position);
+    listener.onMovieFavorite(favoriteMovie);
   }
 
   void updateMovieList(List<Movie> movies) {
