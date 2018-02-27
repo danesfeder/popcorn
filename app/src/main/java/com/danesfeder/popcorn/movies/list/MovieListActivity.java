@@ -47,6 +47,12 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
   }
 
   @Override
+  protected void onResume() {
+    super.onResume();
+    refreshNavigationView();
+  }
+
+  @Override
   protected void onPause() {
     super.onPause();
     saveSharedPreferences();
@@ -121,6 +127,17 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
     taskType = preferences.getInt(getString(R.string.preference_task_type), FetchMoviesTask.POPULAR);
     navigation.setSelectedItemId(preferences.getInt(getString(R.string.preference_navigation_position), 0));
+  }
+
+  private void refreshNavigationView() {
+    switch (taskType) {
+      case FetchMoviesTask.POPULAR:
+        navigation.setSelectedItemId(R.id.navigation_popular);
+        break;
+      case FetchMoviesTask.TOP_RATED:
+        navigation.setSelectedItemId(R.id.navigation_rating);
+        break;
+    }
   }
 
   /**
