@@ -1,21 +1,20 @@
 package com.danesfeder.popcorn.movies.list;
 
+import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -23,6 +22,7 @@ import android.widget.Toast;
 import com.danesfeder.popcorn.R;
 import com.danesfeder.popcorn.movies.detail.MovieDetailActivity;
 import com.danesfeder.popcorn.movies.favorite.MovieFavoritesActivity;
+import com.danesfeder.popcorn.movies.favorite.data.FavoriteContract;
 import com.danesfeder.popcorn.movies.list.network.FetchMoviesTask;
 import com.danesfeder.popcorn.movies.list.network.Movie;
 
@@ -79,7 +79,18 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
 
   @Override
   public void onMovieFavorite(Movie favoriteMovie) {
-    Toast.makeText(this, favoriteMovie.getTitle(), Toast.LENGTH_SHORT).show();
+    ContentValues contentValues = new ContentValues();
+    contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_TITLE, favoriteMovie.getTitle());
+    contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_OVERVIEW, favoriteMovie.getOverview());
+    contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_BACKDROP_URL, favoriteMovie.getBackdropUrl(this));
+    contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_POSTER_URL, favoriteMovie.getPosterUrl(this));
+    contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_RATING, favoriteMovie.getRating());
+    contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_RELEASE_DATE, favoriteMovie.getReleaseDate());
+
+    Uri uri = getContentResolver().insert(FavoriteContract.FavoriteEntry.CONTENT_URI, contentValues);
+    if (uri != null) {
+      Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_LONG).show();
+    }
   }
 
   private void init() {
@@ -203,44 +214,28 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
     new AlertDialog.Builder(this)
       .setTitle(R.string.internet_connection_title)
       .setMessage(R.string.internet_connection_message)
-      .setPositiveButton(R.string.button_text_try_again, new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int which) {
-          fetchMovies(taskType);
-        }
-      })
-      .setNegativeButton(R.string.button_text_dismiss, new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int which) {
-          dialog.dismiss();
-        }
-      })
+      .setPositiveButton(R.string.button_text_try_again, (dialog, which) -> fetchMovies(taskType))
+      .setNegativeButton(R.string.button_text_dismiss, (dialog, which) -> dialog.dismiss())
       .setIcon(android.R.drawable.ic_dialog_alert)
       .show();
   }
 
   private final SwipeRefreshLayout.OnRefreshListener refreshListener
-    = new SwipeRefreshLayout.OnRefreshListener() {
-    @Override
-    public void onRefresh() {
-      fetchMovies(taskType);
-    }
-  };
+    = () -> fetchMovies(taskType);
 
   private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener
-    = new BottomNavigationView.OnNavigationItemSelectedListener() {
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-      switch (item.getItemId()) {
-        case R.id.navigation_popular:
-          fetchMovies(FetchMoviesTask.POPULAR);
-          return true;
-        case R.id.navigation_rating:
-          fetchMovies(FetchMoviesTask.TOP_RATED);
-          return true;
-        case R.id.navigation_favorites:
-          launchFavoritesActivity();
-          return true;
-      }
-      return false;
+    = item -> {
+    switch (item.getItemId()) {
+      case R.id.navigation_popular:
+        fetchMovies(FetchMoviesTask.POPULAR);
+        return true;
+      case R.id.navigation_rating:
+        fetchMovies(FetchMoviesTask.TOP_RATED);
+        return true;
+      case R.id.navigation_favorites:
+        launchFavoritesActivity();
+        return true;
     }
+    return false;
   };
 }

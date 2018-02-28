@@ -39,11 +39,6 @@ class MovieViewHolder extends RecyclerView.ViewHolder {
     movieRatingBar.setRating(movieRating);
   }
 
-  interface ViewHolderClickListener {
-    void onViewHolderClick(int position);
-    void onViewHolderFavorite(int position);
-  }
-
   private void initListeners() {
     movieImageView.setOnClickListener(v -> listener.onViewHolderClick(getAdapterPosition()));
     favoriteAnimationView.setOnClickListener(v -> {
@@ -61,5 +56,11 @@ class MovieViewHolder extends RecyclerView.ViewHolder {
     } else {
       favoriteAnimationView.setProgress(0f);
     }
+  }
+
+  interface ViewHolderClickListener {
+    void onViewHolderClick(int position);
+
+    void onViewHolderFavorite(int position);
   }
 }
