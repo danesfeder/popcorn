@@ -16,7 +16,6 @@ public class FavoriteDbHelper extends SQLiteOpenHelper {
 
   @Override
   public void onCreate(SQLiteDatabase db) {
-
     final String CREATE_TABLE = "CREATE TABLE "          + FavoriteContract.FavoriteEntry.TABLE_NAME + " (" +
       FavoriteContract.FavoriteEntry._ID                 + " INTEGER PRIMARY KEY, " +
       FavoriteContract.FavoriteEntry.COLUMN_TITLE        + " TEXT NOT NULL, " +
@@ -25,7 +24,6 @@ public class FavoriteDbHelper extends SQLiteOpenHelper {
       FavoriteContract.FavoriteEntry.COLUMN_BACKDROP_URL + " TEXT NOT NULL, " +
       FavoriteContract.FavoriteEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
       FavoriteContract.FavoriteEntry.COLUMN_RATING       + " FLOAT NOT NULL);";
-
     db.execSQL(CREATE_TABLE);
   }
 

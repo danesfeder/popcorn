@@ -10,7 +10,7 @@ public class FavoriteContract {
   }
 
   public static final String AUTHORITY = "com.danesfeder.popcorn.movies.favorite.data";
-  public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+  static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
   public static final String PATH_FAVORITES = "favorites";
 

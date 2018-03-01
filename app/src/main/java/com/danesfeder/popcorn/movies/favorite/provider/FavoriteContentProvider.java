@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -56,24 +57,27 @@ public class FavoriteContentProvider extends ContentProvider {
     switch (match) {
       case FAVORITES:
         long id = db.insert(TABLE_NAME, null, values);
+        // Check if valid id, otherwise throw exception
         if (id > 0) {
           returnUri = ContentUris.withAppendedId(CONTENT_URI, id);
         } else {
-          throw new android.database.SQLException("Failed to insert row into " + uri);
+          throw new SQLException("Failed to insert row into " + uri);
         }
         break;
       default:
         throw new UnsupportedOperationException("Unknown uri: " + uri);
     }
 
-    getContext().getContentResolver().notifyChange(uri, null);
-    return returnUri;
+    if (getContext() != null) {
+      getContext().getContentResolver().notifyChange(uri, null);
+      return returnUri;
+    }
+    return null;
   }
 
   @Override
   public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                       String[] selectionArgs, String sortOrder) {
-
     final SQLiteDatabase db = favoriteDbHelper.getReadableDatabase();
 
     int match = uriMatcher.match(uri);
@@ -89,13 +93,15 @@ public class FavoriteContentProvider extends ContentProvider {
           null,
           sortOrder);
         break;
-      // Default exception
       default:
         throw new UnsupportedOperationException("Unknown uri: " + uri);
     }
 
-    cursor.setNotificationUri(getContext().getContentResolver(), uri);
-    return cursor;
+    if (getContext() != null) {
+      cursor.setNotificationUri(getContext().getContentResolver(), uri);
+      return cursor;
+    }
+    return null;
   }
 
   @Override
@@ -115,7 +121,7 @@ public class FavoriteContentProvider extends ContentProvider {
         throw new UnsupportedOperationException("Unknown uri: " + uri);
     }
 
-    if (favoriteDeleted != 0) {
+    if (getContext() != null && favoriteDeleted != 0) {
       getContext().getContentResolver().notifyChange(uri, null);
     }
     return favoriteDeleted;
