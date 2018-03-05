@@ -21,7 +21,7 @@ import com.danesfeder.popcorn.movies.detail.MovieDetailActivity;
 import com.danesfeder.popcorn.movies.favorite.MovieFavoritesActivity;
 import com.danesfeder.popcorn.movies.favorite.data.FavoriteDbHelper;
 import com.danesfeder.popcorn.movies.list.network.FetchMoviesTask;
-import com.danesfeder.popcorn.movies.list.network.Movie;
+import com.danesfeder.popcorn.movies.list.network.model.Movie;
 
 import java.util.List;
 

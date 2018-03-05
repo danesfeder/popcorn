@@ -2,15 +2,21 @@ package com.danesfeder.popcorn.movies.detail;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.danesfeder.popcorn.R;
-import com.danesfeder.popcorn.movies.list.network.Movie;
+import com.danesfeder.popcorn.movies.list.network.FetchMovieReviewsTask;
+import com.danesfeder.popcorn.movies.list.network.model.Movie;
+import com.danesfeder.popcorn.movies.list.network.model.Review;
 import com.squareup.picasso.Picasso;
 
-public class MovieDetailActivity extends AppCompatActivity {
+import java.util.List;
+
+public class MovieDetailActivity extends AppCompatActivity
+  implements FetchMovieReviewsTask.MovieReviewsLoadedListener {
 
   private ImageView moviePosterImageView;
   private ImageView movieBackdropImageView;
@@ -28,6 +34,15 @@ public class MovieDetailActivity extends AppCompatActivity {
     Movie movie = getIntent().getParcelableExtra(getString(R.string.movie_detail_extra));
     loadMovieImages(movie);
     setMovieDetails(movie);
+
+    new FetchMovieReviewsTask(movie.getId(), this).execute();
+  }
+
+  @Override
+  public void onReviewsLoaded(List<Review> reviews) {
+    for (Review review : reviews) {
+      Log.d("Review Loaded", review.getAuthor());
+    }
   }
 
   private void setMovieDetails(Movie movie) {

@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.widget.Toast;
 
-import com.danesfeder.popcorn.movies.list.network.Movie;
+import com.danesfeder.popcorn.movies.list.network.model.Movie;
 
 public class FavoriteDbHelper extends SQLiteOpenHelper {
 

@@ -5,6 +5,8 @@ import android.support.annotation.IntDef;
 import android.util.Log;
 
 import com.danesfeder.popcorn.BuildConfig;
+import com.danesfeder.popcorn.movies.list.network.model.Movie;
+import com.danesfeder.popcorn.movies.list.network.model.Movies;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
@@ -24,7 +26,7 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, List<Movie>> {
   public final static int TOP_RATED = 1;
 
   @Retention(RetentionPolicy.SOURCE)
-  @IntDef({POPULAR, TOP_RATED})
+  @IntDef( {POPULAR, TOP_RATED})
   @interface TASK_TYPE {
   }
 

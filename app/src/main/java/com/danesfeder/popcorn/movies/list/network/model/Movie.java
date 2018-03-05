@@ -1,4 +1,4 @@
-package com.danesfeder.popcorn.movies.list.network;
+package com.danesfeder.popcorn.movies.list.network.model;
 
 import android.content.Context;
 import android.os.Parcel;
@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
+import com.danesfeder.popcorn.movies.list.network.NetworkConstants;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.text.DateFormat;
@@ -17,13 +19,13 @@ import java.util.Locale;
 
 public class Movie implements Parcelable {
 
-  @SerializedName("id")
+  @Expose
   private long id;
   @SerializedName("original_title")
   private String title;
   @SerializedName("poster_path")
   private String posterUrl;
-  @SerializedName("overview")
+  @Expose
   private String overview;
   @SerializedName("vote_average")
   private String rating;
