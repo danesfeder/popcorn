@@ -8,7 +8,7 @@ public class FavoriteDbHelper extends SQLiteOpenHelper {
 
   private static final String DATABASE_NAME = "favoritesDb.db";
 
-  private static final int VERSION = 1;
+  private static final int VERSION = 2;
 
   public FavoriteDbHelper(Context context) {
     super(context, DATABASE_NAME, null, VERSION);
@@ -18,6 +18,7 @@ public class FavoriteDbHelper extends SQLiteOpenHelper {
   public void onCreate(SQLiteDatabase db) {
     final String CREATE_TABLE = "CREATE TABLE "          + FavoriteContract.FavoriteEntry.TABLE_NAME + " (" +
       FavoriteContract.FavoriteEntry._ID                 + " INTEGER PRIMARY KEY, " +
+      FavoriteContract.FavoriteEntry.COLUMN_ID           + " LONG NOT NULL, " +
       FavoriteContract.FavoriteEntry.COLUMN_TITLE        + " TEXT NOT NULL, " +
       FavoriteContract.FavoriteEntry.COLUMN_POSTER_URL   + " TEXT NOT NULL, " +
       FavoriteContract.FavoriteEntry.COLUMN_OVERVIEW     + " TEXT NOT NULL, " +

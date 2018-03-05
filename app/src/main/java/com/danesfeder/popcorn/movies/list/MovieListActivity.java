@@ -80,6 +80,7 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
   @Override
   public void onMovieFavorite(Movie favoriteMovie) {
     ContentValues contentValues = new ContentValues();
+    contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_ID, favoriteMovie.getId());
     contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_TITLE, favoriteMovie.getTitle());
     contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_OVERVIEW, favoriteMovie.getOverview());
     contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_BACKDROP_URL, favoriteMovie.getBackdropUrl(this));

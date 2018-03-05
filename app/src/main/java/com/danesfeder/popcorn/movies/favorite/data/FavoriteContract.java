@@ -24,6 +24,7 @@ public class FavoriteContract {
 
     // Base columns adds ID automatically
     // Favorite columns include all fields from Movie.java
+    public static final String COLUMN_ID = "id";
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_POSTER_URL = "poster_url";
     public static final String COLUMN_OVERVIEW = "overview";
