@@ -53,6 +53,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> implemen
     listener.onMovieFavorite(favoriteMovie);
   }
 
+  @Override
+  public void onViewHolderFavoriteRemoved(int position) {
+    Movie favoriteMovieRemoved = movieList.get(position);
+    listener.onMovieFavoriteRemoved(favoriteMovieRemoved);
+  }
+
   void updateMovieList(List<Movie> movies) {
     movieList.clear();
     movieList.addAll(movies);

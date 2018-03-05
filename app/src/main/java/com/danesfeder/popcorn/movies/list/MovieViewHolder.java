@@ -43,7 +43,6 @@ class MovieViewHolder extends RecyclerView.ViewHolder {
     movieImageView.setOnClickListener(v -> listener.onViewHolderClick(getAdapterPosition()));
     favoriteAnimationView.setOnClickListener(v -> {
       animateFavoriteView();
-      listener.onViewHolderFavorite(getAdapterPosition());
     });
   }
 
@@ -52,8 +51,10 @@ class MovieViewHolder extends RecyclerView.ViewHolder {
     animator.setInterpolator(new FastOutSlowInInterpolator());
     animator.addUpdateListener(valueAnimator -> favoriteAnimationView.setProgress((Float) valueAnimator.getAnimatedValue()));
     if (favoriteAnimationView.getProgress() == 0f) {
+      listener.onViewHolderFavorite(getAdapterPosition());
       animator.start();
     } else {
+      listener.onViewHolderFavoriteRemoved(getAdapterPosition());
       favoriteAnimationView.setProgress(0f);
     }
   }
@@ -62,5 +63,7 @@ class MovieViewHolder extends RecyclerView.ViewHolder {
     void onViewHolderClick(int position);
 
     void onViewHolderFavorite(int position);
+
+    void onViewHolderFavoriteRemoved(int position);
   }
 }

@@ -1,12 +1,10 @@
 package com.danesfeder.popcorn.movies.list;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.BottomNavigationView;
@@ -17,12 +15,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.danesfeder.popcorn.R;
 import com.danesfeder.popcorn.movies.detail.MovieDetailActivity;
 import com.danesfeder.popcorn.movies.favorite.MovieFavoritesActivity;
-import com.danesfeder.popcorn.movies.favorite.data.FavoriteContract;
+import com.danesfeder.popcorn.movies.favorite.data.FavoriteDbHelper;
 import com.danesfeder.popcorn.movies.list.network.FetchMoviesTask;
 import com.danesfeder.popcorn.movies.list.network.Movie;
 
@@ -79,19 +76,12 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
 
   @Override
   public void onMovieFavorite(Movie favoriteMovie) {
-    ContentValues contentValues = new ContentValues();
-    contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_ID, favoriteMovie.getId());
-    contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_TITLE, favoriteMovie.getTitle());
-    contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_OVERVIEW, favoriteMovie.getOverview());
-    contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_BACKDROP_URL, favoriteMovie.getBackdropUrl(this));
-    contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_POSTER_URL, favoriteMovie.getPosterUrl(this));
-    contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_RATING, favoriteMovie.getRating());
-    contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_RELEASE_DATE, favoriteMovie.getReleaseDate());
+    FavoriteDbHelper.insertFavoriteMovie(this, favoriteMovie);
+  }
 
-    Uri uri = getContentResolver().insert(FavoriteContract.FavoriteEntry.CONTENT_URI, contentValues);
-    if (uri != null) {
-      Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_LONG).show();
-    }
+  @Override
+  public void onMovieFavoriteRemoved(Movie favoriteMovieRemoved) {
+    FavoriteDbHelper.deleteFavoriteMovie(this, favoriteMovieRemoved);
   }
 
   private void init() {
