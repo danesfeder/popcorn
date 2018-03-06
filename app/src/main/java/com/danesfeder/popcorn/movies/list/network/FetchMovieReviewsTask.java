@@ -1,6 +1,7 @@
 package com.danesfeder.popcorn.movies.list.network;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -23,7 +24,7 @@ public class FetchMovieReviewsTask extends AsyncTask<Void, Void, List<Review>> {
   private long movieId = -1;
   private MovieReviewsLoadedListener listener;
 
-  public FetchMovieReviewsTask(@Nullable Long movieId, MovieReviewsLoadedListener listener) {
+  public FetchMovieReviewsTask(@Nullable Long movieId, @NonNull MovieReviewsLoadedListener listener) {
     this.listener = listener;
     if (movieId != null) {
       this.movieId = movieId;
@@ -62,16 +63,16 @@ public class FetchMovieReviewsTask extends AsyncTask<Void, Void, List<Review>> {
   @Override
   protected void onPostExecute(List<Review> reviews) {
     if (reviews == null || reviews.isEmpty()) {
-      Log.e(LOG_TAG, "An error occurred retrieving the reviews - review list is null or empty");
+      Log.e(LOG_TAG, "Review list is null or empty");
+      listener.onReviewsEmpty();
       return;
     }
     // Valid list, pass to listener
-    if (listener != null) {
-      listener.onReviewsLoaded(reviews);
-    }
+    listener.onReviewsLoaded(reviews);
   }
 
   public interface MovieReviewsLoadedListener {
     void onReviewsLoaded(List<Review> reviews);
+    void onReviewsEmpty();
   }
 }

@@ -2,12 +2,16 @@ package com.danesfeder.popcorn.movies.detail;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.danesfeder.popcorn.R;
+import com.danesfeder.popcorn.movies.detail.reviews.ReviewAdapter;
 import com.danesfeder.popcorn.movies.list.network.FetchMovieReviewsTask;
 import com.danesfeder.popcorn.movies.list.network.model.Movie;
 import com.danesfeder.popcorn.movies.list.network.model.Review;
@@ -24,32 +28,32 @@ public class MovieDetailActivity extends AppCompatActivity
   private TextView movieOverviewTextView;
   private TextView movieReleaseDate;
   private RatingBar movieRatingBar;
+  private RecyclerView reviewRecyclerView;
+  private ReviewAdapter reviewAdapter;
+  private ProgressBar reviewProgressBar;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_movie_detail);
     bind();
+    initReviewRecyclerView();
 
     Movie movie = getIntent().getParcelableExtra(getString(R.string.movie_detail_extra));
     loadMovieImages(movie);
     setMovieDetails(movie);
-
-    new FetchMovieReviewsTask(movie.getId(), this).execute();
+    loadMovieReviews(movie);
   }
 
   @Override
   public void onReviewsLoaded(List<Review> reviews) {
-    for (Review review : reviews) {
-      Log.d("Review Loaded", review.getAuthor());
-    }
+    reviewProgressBar.setVisibility(View.GONE);
+    reviewAdapter.updateReviewList(reviews);
   }
 
-  private void setMovieDetails(Movie movie) {
-    movieTitleTextView.setText(movie.getTitle());
-    movieOverviewTextView.setText(movie.getOverview().trim());
-    movieReleaseDate.setText(movie.getReleaseDate());
-    movieRatingBar.setRating(movie.getRating());
+  @Override
+  public void onReviewsEmpty() {
+    reviewProgressBar.setVisibility(View.GONE);
   }
 
   private void bind() {
@@ -59,6 +63,26 @@ public class MovieDetailActivity extends AppCompatActivity
     movieOverviewTextView = findViewById(R.id.tv_movie_overview);
     movieReleaseDate = findViewById(R.id.tv_movie_release_date);
     movieRatingBar = findViewById(R.id.rb_movie_rating);
+    reviewRecyclerView = findViewById(R.id.rv_reviews);
+    reviewProgressBar = findViewById(R.id.pb_review_loading);
+  }
+
+  private void initReviewRecyclerView() {
+    reviewAdapter = new ReviewAdapter();
+    reviewRecyclerView.setAdapter(reviewAdapter);
+    reviewRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    reviewRecyclerView.setHasFixedSize(true);
+  }
+
+  private void setMovieDetails(Movie movie) {
+    movieTitleTextView.setText(movie.getTitle());
+    movieOverviewTextView.setText(movie.getOverview().trim());
+    movieReleaseDate.setText(movie.getReleaseDate());
+    movieRatingBar.setRating(movie.getRating());
+  }
+
+  private void loadMovieReviews(Movie movie) {
+    new FetchMovieReviewsTask(movie.getId(), this).execute();
   }
 
   private void loadMovieImages(Movie movie) {
