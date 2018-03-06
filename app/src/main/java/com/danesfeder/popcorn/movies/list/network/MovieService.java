@@ -17,9 +17,9 @@ public interface MovieService {
   @GET("3/movie/top_rated")
   Call<Movies> fetchTopRatedMovies(@Query("api_key") String apiKey);
 
-  @GET("/movie/{id}/videos")
+  @GET("3/movie/{id}/videos")
   Call<Videos> fetchVideosForMovieId(@Path("id") long movieId, @Query("api_key") String apiKey);
 
-  @GET("/movie/{id}/reviews")
+  @GET("3/movie/{id}/reviews")
   Call<Reviews> fetchReviewsForMovieId(@Path("id") long movieId, @Query("api_key") String apiKey);
 }

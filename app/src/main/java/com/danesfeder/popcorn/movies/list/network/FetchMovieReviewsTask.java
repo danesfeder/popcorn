@@ -34,7 +34,7 @@ public class FetchMovieReviewsTask extends AsyncTask<Void, Void, List<Review>> {
   protected List<Review> doInBackground(Void... voids) {
 
     Retrofit retrofit = new Retrofit.Builder()
-      .baseUrl(NetworkConstants.MOVIE_DB_BASE_URL_3)
+      .baseUrl(NetworkConstants.MOVIE_DB_BASE_URL)
       .addConverterFactory(GsonConverterFactory.create())
       .build();
 

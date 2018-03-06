@@ -47,7 +47,7 @@ public class MovieDetailActivity extends AppCompatActivity
 
   private void setMovieDetails(Movie movie) {
     movieTitleTextView.setText(movie.getTitle());
-    movieOverviewTextView.setText(movie.getOverview());
+    movieOverviewTextView.setText(movie.getOverview().trim());
     movieReleaseDate.setText(movie.getReleaseDate());
     movieRatingBar.setRating(movie.getRating());
   }
