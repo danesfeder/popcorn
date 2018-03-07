@@ -1,6 +1,9 @@
 package com.danesfeder.popcorn.movies.detail;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,16 +14,19 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.danesfeder.popcorn.R;
+import com.danesfeder.popcorn.movies.detail.reviews.FetchMovieReviewsTask;
 import com.danesfeder.popcorn.movies.detail.reviews.ReviewAdapter;
-import com.danesfeder.popcorn.movies.list.network.FetchMovieReviewsTask;
+import com.danesfeder.popcorn.movies.detail.videos.FetchMovieVideosTask;
 import com.danesfeder.popcorn.movies.list.network.model.Movie;
 import com.danesfeder.popcorn.movies.list.network.model.Review;
+import com.danesfeder.popcorn.movies.list.network.model.Video;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class MovieDetailActivity extends AppCompatActivity
-  implements FetchMovieReviewsTask.MovieReviewsLoadedListener {
+  implements FetchMovieReviewsTask.MovieReviewsLoadedListener,
+  FetchMovieVideosTask.MovieVideosLoadedListener {
 
   private ImageView moviePosterImageView;
   private ImageView movieBackdropImageView;
@@ -31,6 +37,9 @@ public class MovieDetailActivity extends AppCompatActivity
   private RecyclerView reviewRecyclerView;
   private ReviewAdapter reviewAdapter;
   private ProgressBar reviewProgressBar;
+  private FloatingActionButton videoPlayBtn;
+  private ProgressBar videoProgressBar;
+  private List<Video> videos;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -38,11 +47,13 @@ public class MovieDetailActivity extends AppCompatActivity
     setContentView(R.layout.activity_movie_detail);
     bind();
     initReviewRecyclerView();
+    initVideoClickListener();
 
     Movie movie = getIntent().getParcelableExtra(getString(R.string.movie_detail_extra));
     loadMovieImages(movie);
     setMovieDetails(movie);
     loadMovieReviews(movie);
+    loadMovieVideos(movie);
   }
 
   @Override
@@ -56,6 +67,18 @@ public class MovieDetailActivity extends AppCompatActivity
     reviewProgressBar.setVisibility(View.GONE);
   }
 
+  @Override
+  public void onVideosLoaded(List<Video> videos) {
+    this.videos = videos;
+    videoProgressBar.setVisibility(View.GONE);
+    videoPlayBtn.show();
+  }
+
+  @Override
+  public void onVideosEmpty() {
+    videoProgressBar.setVisibility(View.GONE);
+  }
+
   private void bind() {
     moviePosterImageView = findViewById(R.id.iv_movie_poster);
     movieBackdropImageView = findViewById(R.id.iv_movie_backdrop);
@@ -65,6 +88,8 @@ public class MovieDetailActivity extends AppCompatActivity
     movieRatingBar = findViewById(R.id.rb_movie_rating);
     reviewRecyclerView = findViewById(R.id.rv_reviews);
     reviewProgressBar = findViewById(R.id.pb_review_loading);
+    videoPlayBtn = findViewById(R.id.iv_play_arrow);
+    videoProgressBar = findViewById(R.id.pb_video_loading);
   }
 
   private void initReviewRecyclerView() {
@@ -72,6 +97,12 @@ public class MovieDetailActivity extends AppCompatActivity
     reviewRecyclerView.setAdapter(reviewAdapter);
     reviewRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     reviewRecyclerView.setHasFixedSize(true);
+  }
+
+  private void initVideoClickListener() {
+    videoPlayBtn.setOnClickListener(view -> {
+      playVideo(videos);
+    });
   }
 
   private void setMovieDetails(Movie movie) {
@@ -85,6 +116,10 @@ public class MovieDetailActivity extends AppCompatActivity
     new FetchMovieReviewsTask(movie.getId(), this).execute();
   }
 
+  private void loadMovieVideos(Movie movie) {
+    new FetchMovieVideosTask(movie.getId(), this).execute();
+  }
+
   private void loadMovieImages(Movie movie) {
     Picasso.with(this).load(movie.getPosterUrl(this))
       .fit()
@@ -96,5 +131,15 @@ public class MovieDetailActivity extends AppCompatActivity
       .centerCrop()
       .error(R.drawable.ic_error)
       .into(movieBackdropImageView);
+  }
+
+  public void playVideo(List<Video> videos) {
+    for (Video video : videos) {
+      if (video.getSite().equals(Video.SITE_YOUTUBE)) {
+        startActivity(new Intent(Intent.ACTION_VIEW,
+          Uri.parse("http://www.youtube.com/watch?v=" + video.getKey())));
+        break;
+      }
+    }
   }
 }

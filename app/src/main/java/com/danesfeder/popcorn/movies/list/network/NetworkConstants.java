@@ -10,5 +10,5 @@ public class NetworkConstants {
   /**
    * Used as base URL for all movie database requests.
    */
-  static final String MOVIE_DB_BASE_URL = "http://api.themoviedb.org/";
+  public static final String MOVIE_DB_BASE_URL = "http://api.themoviedb.org/";
 }

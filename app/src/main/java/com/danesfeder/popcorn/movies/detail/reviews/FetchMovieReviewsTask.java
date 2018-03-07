@@ -1,4 +1,4 @@
-package com.danesfeder.popcorn.movies.list.network;
+package com.danesfeder.popcorn.movies.detail.reviews;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.danesfeder.popcorn.BuildConfig;
+import com.danesfeder.popcorn.movies.list.network.MovieService;
+import com.danesfeder.popcorn.movies.list.network.NetworkConstants;
 import com.danesfeder.popcorn.movies.list.network.model.Review;
 import com.danesfeder.popcorn.movies.list.network.model.Reviews;
 
@@ -49,7 +51,7 @@ public class FetchMovieReviewsTask extends AsyncTask<Void, Void, List<Review>> {
 
     reviewsCall = service.fetchReviewsForMovieId(movieId, movieDbApiKey);
 
-    // Execute the call and return the movies if successful
+    // Execute the call and return the reviews if successful
     try {
       Response<Reviews> response = reviewsCall.execute();
       Reviews reviews = response.body();
@@ -73,6 +75,7 @@ public class FetchMovieReviewsTask extends AsyncTask<Void, Void, List<Review>> {
 
   public interface MovieReviewsLoadedListener {
     void onReviewsLoaded(List<Review> reviews);
+
     void onReviewsEmpty();
   }
 }
