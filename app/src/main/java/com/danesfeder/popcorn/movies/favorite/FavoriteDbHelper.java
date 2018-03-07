@@ -1,4 +1,4 @@
-package com.danesfeder.popcorn.movies.favorite.data;
+package com.danesfeder.popcorn.movies.favorite;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.widget.Toast;
 
-import com.danesfeder.popcorn.movies.list.network.model.Movie;
+import com.danesfeder.popcorn.movies.list.Movie;
 
 public class FavoriteDbHelper extends SQLiteOpenHelper {
 

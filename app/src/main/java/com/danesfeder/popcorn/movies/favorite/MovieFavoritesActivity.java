@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.danesfeder.popcorn.R;
-import com.danesfeder.popcorn.movies.favorite.data.FavoriteContract;
 
 public class MovieFavoritesActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 

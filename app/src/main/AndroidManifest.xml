@@ -36,7 +36,7 @@
 
         <!-- Content provider for our saved favorites -->
         <provider
-            android:name=".movies.favorite.provider.FavoriteContentProvider"
+            android:name=".movies.favorite.FavoriteContentProvider"
             android:authorities="com.danesfeder.popcorn.movies.favorite.data"
             android:exported="false"/>
 

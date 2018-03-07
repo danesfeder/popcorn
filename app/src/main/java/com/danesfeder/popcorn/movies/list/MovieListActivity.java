@@ -1,15 +1,11 @@
 package com.danesfeder.popcorn.movies.list;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,10 +14,9 @@ import android.widget.ProgressBar;
 
 import com.danesfeder.popcorn.R;
 import com.danesfeder.popcorn.movies.detail.MovieDetailActivity;
+import com.danesfeder.popcorn.movies.favorite.FavoriteDbHelper;
 import com.danesfeder.popcorn.movies.favorite.MovieFavoritesActivity;
-import com.danesfeder.popcorn.movies.favorite.data.FavoriteDbHelper;
-import com.danesfeder.popcorn.movies.list.network.FetchMoviesTask;
-import com.danesfeder.popcorn.movies.list.network.model.Movie;
+import com.danesfeder.popcorn.movies.network.NetworkUtils;
 
 import java.util.List;
 
@@ -173,42 +168,17 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
    */
   private void fetchMovies(int taskType) {
     // Check for an internet connection
-    checkInternetConnection();
-    // Show loading (don't show if from refresh)
-    if (!refreshLayout.isRefreshing()) {
-      progressBar.setVisibility(View.VISIBLE);
+    if (NetworkUtils.checkInternetConnection(this)) {
+      // Show loading (don't show if from refresh)
+      if (!refreshLayout.isRefreshing()) {
+        progressBar.setVisibility(View.VISIBLE);
+      }
+      // Scroll rv to the top of the list
+      rvMovies.smoothScrollToPosition(0);
+      // Fetch popular movies
+      this.taskType = taskType;
+      new FetchMoviesTask(taskType, this).execute();
     }
-    // Scroll rv to the top of the list
-    rvMovies.smoothScrollToPosition(0);
-    // Fetch popular movies
-    this.taskType = taskType;
-    new FetchMoviesTask(taskType, this).execute();
-  }
-
-  private void checkInternetConnection() {
-    ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-    // Make sure a manager was found
-    if (manager == null) {
-      return;
-    }
-
-    NetworkInfo activeNetwork = manager.getActiveNetworkInfo();
-    boolean isConnected = activeNetwork != null &&
-      activeNetwork.isConnectedOrConnecting();
-
-    if (!isConnected) {
-      showConnectivityDialog();
-    }
-  }
-
-  private void showConnectivityDialog() {
-    new AlertDialog.Builder(this)
-      .setTitle(R.string.internet_connection_title)
-      .setMessage(R.string.internet_connection_message)
-      .setPositiveButton(R.string.button_text_try_again, (dialog, which) -> fetchMovies(taskType))
-      .setNegativeButton(R.string.button_text_dismiss, (dialog, which) -> dialog.dismiss())
-      .setIcon(android.R.drawable.ic_dialog_alert)
-      .show();
   }
 
   private final SwipeRefreshLayout.OnRefreshListener refreshListener

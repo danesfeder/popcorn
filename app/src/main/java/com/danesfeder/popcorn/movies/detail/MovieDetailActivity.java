@@ -17,9 +17,10 @@ import com.danesfeder.popcorn.R;
 import com.danesfeder.popcorn.movies.detail.reviews.FetchMovieReviewsTask;
 import com.danesfeder.popcorn.movies.detail.reviews.ReviewAdapter;
 import com.danesfeder.popcorn.movies.detail.videos.FetchMovieVideosTask;
-import com.danesfeder.popcorn.movies.list.network.model.Movie;
-import com.danesfeder.popcorn.movies.list.network.model.Review;
-import com.danesfeder.popcorn.movies.list.network.model.Video;
+import com.danesfeder.popcorn.movies.list.Movie;
+import com.danesfeder.popcorn.movies.detail.reviews.Review;
+import com.danesfeder.popcorn.movies.detail.videos.Video;
+import com.danesfeder.popcorn.movies.network.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -50,10 +51,13 @@ public class MovieDetailActivity extends AppCompatActivity
     initVideoClickListener();
 
     Movie movie = getIntent().getParcelableExtra(getString(R.string.movie_detail_extra));
-    loadMovieImages(movie);
     setMovieDetails(movie);
-    loadMovieReviews(movie);
-    loadMovieVideos(movie);
+
+    if (NetworkUtils.checkInternetConnection(this)) {
+      loadMovieImages(movie);
+      loadMovieReviews(movie);
+      loadMovieVideos(movie);
+    }
   }
 
   @Override

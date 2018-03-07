@@ -6,10 +6,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.danesfeder.popcorn.BuildConfig;
-import com.danesfeder.popcorn.movies.list.network.MovieService;
-import com.danesfeder.popcorn.movies.list.network.NetworkConstants;
-import com.danesfeder.popcorn.movies.list.network.model.Review;
-import com.danesfeder.popcorn.movies.list.network.model.Reviews;
+import com.danesfeder.popcorn.movies.network.MovieService;
+import com.danesfeder.popcorn.movies.network.NetworkConstants;
 
 import java.io.IOException;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.danesfeder.popcorn.movies.favorite.provider;
+package com.danesfeder.popcorn.movies.favorite;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -12,12 +12,9 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.danesfeder.popcorn.movies.favorite.data.FavoriteContract;
-import com.danesfeder.popcorn.movies.favorite.data.FavoriteDbHelper;
-
-import static com.danesfeder.popcorn.movies.favorite.data.FavoriteContract.FavoriteEntry.COLUMN_ID;
-import static com.danesfeder.popcorn.movies.favorite.data.FavoriteContract.FavoriteEntry.CONTENT_URI;
-import static com.danesfeder.popcorn.movies.favorite.data.FavoriteContract.FavoriteEntry.TABLE_NAME;
+import static com.danesfeder.popcorn.movies.favorite.FavoriteContract.FavoriteEntry.COLUMN_ID;
+import static com.danesfeder.popcorn.movies.favorite.FavoriteContract.FavoriteEntry.CONTENT_URI;
+import static com.danesfeder.popcorn.movies.favorite.FavoriteContract.FavoriteEntry.TABLE_NAME;
 
 public class FavoriteContentProvider extends ContentProvider {
 

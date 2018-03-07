@@ -1,4 +1,4 @@
-package com.danesfeder.popcorn.movies.list.network.model;
+package com.danesfeder.popcorn.movies.list;
 
 import android.content.Context;
 import android.os.Parcel;
@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
-import com.danesfeder.popcorn.movies.list.network.NetworkConstants;
+import com.danesfeder.popcorn.movies.network.NetworkConstants;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

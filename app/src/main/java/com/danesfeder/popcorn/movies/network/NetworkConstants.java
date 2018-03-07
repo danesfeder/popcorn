@@ -1,4 +1,4 @@
-package com.danesfeder.popcorn.movies.list.network;
+package com.danesfeder.popcorn.movies.network;
 
 public class NetworkConstants {
 

@@ -1,4 +1,4 @@
-package com.danesfeder.popcorn.movies.favorite.data;
+package com.danesfeder.popcorn.movies.favorite;
 
 import android.net.Uri;
 import android.provider.BaseColumns;

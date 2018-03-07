@@ -1,8 +1,8 @@
-package com.danesfeder.popcorn.movies.list.network;
+package com.danesfeder.popcorn.movies.network;
 
-import com.danesfeder.popcorn.movies.list.network.model.Movies;
-import com.danesfeder.popcorn.movies.list.network.model.Reviews;
-import com.danesfeder.popcorn.movies.list.network.model.Videos;
+import com.danesfeder.popcorn.movies.detail.reviews.Reviews;
+import com.danesfeder.popcorn.movies.detail.videos.Videos;
+import com.danesfeder.popcorn.movies.list.Movies;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

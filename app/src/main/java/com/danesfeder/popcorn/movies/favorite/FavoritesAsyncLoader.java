@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
-import com.danesfeder.popcorn.movies.favorite.data.FavoriteContract;
-
 import java.lang.ref.WeakReference;
 
 import static android.content.ContentValues.TAG;

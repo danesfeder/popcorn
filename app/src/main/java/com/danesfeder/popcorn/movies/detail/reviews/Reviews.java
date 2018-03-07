@@ -1,4 +1,4 @@
-package com.danesfeder.popcorn.movies.list.network.model;
+package com.danesfeder.popcorn.movies.detail.reviews;
 
 import com.google.gson.annotations.SerializedName;
 

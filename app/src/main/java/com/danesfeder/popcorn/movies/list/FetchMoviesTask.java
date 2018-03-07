@@ -1,12 +1,12 @@
-package com.danesfeder.popcorn.movies.list.network;
+package com.danesfeder.popcorn.movies.list;
 
 import android.os.AsyncTask;
 import android.support.annotation.IntDef;
 import android.util.Log;
 
 import com.danesfeder.popcorn.BuildConfig;
-import com.danesfeder.popcorn.movies.list.network.model.Movie;
-import com.danesfeder.popcorn.movies.list.network.model.Movies;
+import com.danesfeder.popcorn.movies.network.MovieService;
+import com.danesfeder.popcorn.movies.network.NetworkConstants;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
