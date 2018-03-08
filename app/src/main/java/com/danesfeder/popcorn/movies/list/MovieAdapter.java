@@ -33,6 +33,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> implemen
     Movie movie = movieList.get(position);
     holder.setMovieImage(movie.getPosterUrl(holder.itemView.getContext()));
     holder.setMovieRating(movie.getRating());
+    holder.setupFavoriteAnimation(movie.getTitle());
   }
 
   @Override
@@ -62,5 +63,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> implemen
     movieList.clear();
     movieList.addAll(movies);
     notifyDataSetChanged();
+  }
+
+  public ArrayList<Movie> getMovieList() {
+    return (ArrayList<Movie>) movieList;
   }
 }

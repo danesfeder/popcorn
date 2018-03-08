@@ -5,18 +5,30 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
 
 import com.danesfeder.popcorn.R;
+import com.danesfeder.popcorn.movies.favorite.list.FavoriteAdapter;
+import com.danesfeder.popcorn.movies.favorite.list.FavoriteClickListener;
 
-public class MovieFavoritesActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MovieFavoritesActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
+  FavoriteClickListener {
 
   public static final int FAVORITES_LOADER_ID = 0;
+  private FavoriteAdapter favoriteAdapter;
+  private TextView noFavoritesTextView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_movie_favorites);
+
+    noFavoritesTextView = findViewById(R.id.tv_no_favorites);
+    RecyclerView rvFavorites = findViewById(R.id.rv_favorites);
+    initFavoritesRecyclerView(rvFavorites);
 
     getSupportLoaderManager().initLoader(FAVORITES_LOADER_ID, null, this);
   }
@@ -24,7 +36,6 @@ public class MovieFavoritesActivity extends AppCompatActivity implements LoaderM
   @Override
   protected void onResume() {
     super.onResume();
-
     getSupportLoaderManager().restartLoader(FAVORITES_LOADER_ID, null, this);
   }
 
@@ -35,8 +46,10 @@ public class MovieFavoritesActivity extends AppCompatActivity implements LoaderM
 
   @Override
   public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-    Log.d(MovieFavoritesActivity.class.getSimpleName(), "onLoadFinished!");
-    logResults(data);
+    if (data.getCount() > 0) {
+      noFavoritesTextView.setVisibility(View.INVISIBLE);
+    }
+    favoriteAdapter.updateFavorites(data);
   }
 
   @Override
@@ -44,14 +57,14 @@ public class MovieFavoritesActivity extends AppCompatActivity implements LoaderM
     // Remove old data being reset
   }
 
-  private void logResults(Cursor data) {
-    for (int i = 0; i < data.getCount(); i++) {
-      int idIndex = data.getColumnIndex(FavoriteContract.FavoriteEntry._ID);
-      int titleIndex = data.getColumnIndex(FavoriteContract.FavoriteEntry.COLUMN_TITLE);
-      data.moveToPosition(i);
-      final int id = data.getInt(idIndex);
-      String title = data.getString(titleIndex);
-      Log.d(MovieFavoritesActivity.class.getSimpleName(), "Movie Loaded: " + title + " ID: " + id);
-    }
+  @Override
+  public void onFavoriteMovieClick(int favoriteMoviePosition) {
+
+  }
+
+  private void initFavoritesRecyclerView(RecyclerView rvFavorites) {
+    rvFavorites.setLayoutManager(new LinearLayoutManager(this));
+    favoriteAdapter = new FavoriteAdapter(this);
+    rvFavorites.setAdapter(favoriteAdapter);
   }
 }

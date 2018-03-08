@@ -14,4 +14,6 @@
     <string name="movie_detail_extra" translatable="false">movie_detail_extra</string>
     <string name="button_text_try_again">Try Again</string>
     <string name="button_text_dismiss">Dismiss</string>
+    <string name="you_don_t_have_favorites">You don\'t have favorites!</string>
+    <string name="current_movie_list">current_movie_list</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.danesfeder.popcorn.movies.list;
 
 import android.animation.ValueAnimator;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -17,6 +19,7 @@ class MovieViewHolder extends RecyclerView.ViewHolder {
   private RatingBar movieRatingBar;
   private LottieAnimationView favoriteAnimationView;
   private ViewHolderClickListener listener;
+  private SharedPreferences preferences;
 
   MovieViewHolder(View itemView, ViewHolderClickListener listener) {
     super(itemView);
@@ -24,6 +27,7 @@ class MovieViewHolder extends RecyclerView.ViewHolder {
     movieImageView = itemView.findViewById(R.id.iv_movie);
     movieRatingBar = itemView.findViewById(R.id.rb_movie_rating);
     favoriteAnimationView = itemView.findViewById(R.id.lav_favorite);
+    preferences = PreferenceManager.getDefaultSharedPreferences(itemView.getContext());
     initListeners();
   }
 
@@ -37,6 +41,11 @@ class MovieViewHolder extends RecyclerView.ViewHolder {
 
   void setMovieRating(float movieRating) {
     movieRatingBar.setRating(movieRating);
+  }
+
+  void setupFavoriteAnimation(String movieTitle) {
+    boolean isFavorite = preferences.getBoolean(movieTitle, false);
+    favoriteAnimationView.setProgress(isFavorite ? 1f : 0f);
   }
 
   private void initListeners() {

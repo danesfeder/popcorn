@@ -2,12 +2,14 @@ package com.danesfeder.popcorn.movies.list;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -35,7 +37,7 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_display_movies);
-    init();
+    init(savedInstanceState != null);
   }
 
   @Override
@@ -48,6 +50,18 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
   protected void onPause() {
     super.onPause();
     saveSharedPreferences();
+  }
+
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+    movieAdapter.updateMovieList(savedInstanceState.getParcelableArrayList(getString(R.string.current_movie_list)));
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putParcelableArrayList(getString(R.string.current_movie_list), movieAdapter.getMovieList());
   }
 
   @Override
@@ -72,6 +86,7 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
   @Override
   public void onMovieFavorite(Movie favoriteMovie) {
     FavoriteDbHelper.insertFavoriteMovie(this, favoriteMovie);
+    saveFavoriteMovie(favoriteMovie);
   }
 
   @Override
@@ -79,12 +94,15 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
     FavoriteDbHelper.deleteFavoriteMovie(this, favoriteMovieRemoved);
   }
 
-  private void init() {
+  private void init(boolean isConfigurationChange) {
     bind();
     initRecyclerView();
     initListeners();
     extractSharedPreferences();
-    fetchMovies(taskType);
+
+    if (!isConfigurationChange) {
+      fetchMovies(taskType);
+    }
   }
 
   /**
@@ -104,8 +122,12 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
   private void initRecyclerView() {
     movieAdapter = new MovieAdapter(this);
     rvMovies.setAdapter(movieAdapter);
-    rvMovies.setLayoutManager(new GridLayoutManager(this, 2));
     rvMovies.setHasFixedSize(true);
+    if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+      rvMovies.setLayoutManager(new GridLayoutManager(this, 2));
+    } else {
+      rvMovies.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+    }
   }
 
   /**
@@ -153,6 +175,13 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
     Intent movieDetails = new Intent(this, MovieDetailActivity.class);
     movieDetails.putExtra(getString(R.string.movie_detail_extra), clickedMovie);
     startActivity(movieDetails);
+  }
+
+  private void saveFavoriteMovie(Movie favoriteMovie) {
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+    SharedPreferences.Editor editor = preferences.edit();
+    editor.putBoolean(favoriteMovie.getTitle(), true);
+    editor.apply();
   }
 
   private void launchFavoritesActivity() {
