@@ -13,10 +13,13 @@
         android:layout_height="wrap_content">
 
         <android.support.v7.widget.CardView
-            android:id="@+id/cardView"
+            android:id="@+id/cv_movie_detail"
             android:layout_width="150dp"
             android:layout_height="200dp"
             android:layout_marginStart="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?selectableItemBackgroundBorderless"
             app:cardCornerRadius="8dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="parent"
@@ -29,6 +32,18 @@
                 android:contentDescription="@string/content_description_movie_image"/>
 
         </android.support.v7.widget.CardView>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lav_favorite"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:elevation="8dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="@+id/cv_movie_detail"
+            app:layout_constraintEnd_toEndOf="@+id/cv_movie_detail"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/cv_movie_detail"
+            app:lottie_fileName="favorite-heart.json"/>
 
         <ProgressBar
             android:id="@+id/pb_video_loading"
@@ -71,7 +86,7 @@
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cardView"
+            app:layout_constraintStart_toEndOf="@+id/cv_movie_detail"
             app:layout_constraintTop_toTopOf="@+id/guideline"
             tools:text="Movie Title"/>
 
@@ -84,7 +99,7 @@
             android:layout_marginTop="16dp"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cardView"
+            app:layout_constraintStart_toEndOf="@+id/cv_movie_detail"
             app:layout_constraintTop_toBottomOf="@+id/tv_movie_date"
             tools:text="Release Date: 01/01/2018"/>
 
@@ -95,10 +110,10 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="@+id/cardView"
+            app:layout_constraintBottom_toBottomOf="@+id/cv_movie_detail"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@id/cardView"
+            app:layout_constraintStart_toEndOf="@id/cv_movie_detail"
             app:layout_constraintTop_toBottomOf="@+id/tv_movie_release_date"
             app:layout_constraintVertical_bias="0.0">
 
@@ -108,7 +123,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/rating"
                 android:textSize="18sp"
-                app:layout_constraintStart_toEndOf="@+id/cardView"
+                app:layout_constraintStart_toEndOf="@+id/cv_movie_detail"
                 app:layout_constraintTop_toBottomOf="@+id/tv_movie_release_date"/>
 
             <RatingBar
@@ -130,7 +145,7 @@
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView"/>
+            app:layout_constraintTop_toBottomOf="@+id/cv_movie_detail"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_reviews"

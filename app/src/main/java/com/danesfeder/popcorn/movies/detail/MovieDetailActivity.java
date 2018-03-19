@@ -1,11 +1,15 @@
 package com.danesfeder.popcorn.movies.detail;
 
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -14,12 +18,15 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.danesfeder.popcorn.R;
 import com.danesfeder.popcorn.movies.detail.reviews.FetchMovieReviewsTask;
 import com.danesfeder.popcorn.movies.detail.reviews.Review;
 import com.danesfeder.popcorn.movies.detail.reviews.ReviewAdapter;
 import com.danesfeder.popcorn.movies.detail.videos.FetchMovieVideosTask;
 import com.danesfeder.popcorn.movies.detail.videos.Video;
+import com.danesfeder.popcorn.movies.favorite.FavoriteDbHelper;
+import com.danesfeder.popcorn.movies.favorite.FavoriteUtils;
 import com.danesfeder.popcorn.movies.list.Movie;
 import com.danesfeder.popcorn.movies.network.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -32,6 +39,7 @@ public class MovieDetailActivity extends AppCompatActivity
   FetchMovieVideosTask.MovieVideosLoadedListener {
 
   private NestedScrollView movieScrollView;
+  private CardView movieCardView;
   private ImageView moviePosterImageView;
   private ImageView movieBackdropImageView;
   private TextView movieTitleTextView;
@@ -43,6 +51,8 @@ public class MovieDetailActivity extends AppCompatActivity
   private ProgressBar reviewProgressBar;
   private FloatingActionButton videoPlayBtn;
   private ProgressBar videoProgressBar;
+  private LottieAnimationView favoriteAnimationView;
+  private Movie movie;
   private ArrayList<Review> reviews;
   private ArrayList<Video> videos;
 
@@ -52,10 +62,12 @@ public class MovieDetailActivity extends AppCompatActivity
     setContentView(R.layout.activity_movie_detail);
     bind();
     initReviewRecyclerView();
+    initMovieClickListener();
     initVideoClickListener();
 
-    Movie movie = getIntent().getParcelableExtra(getString(R.string.movie_detail_extra));
+    movie = getIntent().getParcelableExtra(getString(R.string.movie_detail_extra));
     setMovieDetails(movie);
+    setupFavoriteAnimation(movie.getTitle());
 
     if (NetworkUtils.checkInternetConnection(this)) {
       loadMovieImages(movie);
@@ -109,6 +121,7 @@ public class MovieDetailActivity extends AppCompatActivity
   }
 
   private void bind() {
+    movieCardView = findViewById(R.id.cv_movie_detail);
     movieScrollView = findViewById(R.id.sv_movie_detail);
     moviePosterImageView = findViewById(R.id.iv_movie_poster);
     movieBackdropImageView = findViewById(R.id.iv_movie_backdrop);
@@ -120,6 +133,7 @@ public class MovieDetailActivity extends AppCompatActivity
     reviewProgressBar = findViewById(R.id.pb_review_loading);
     videoPlayBtn = findViewById(R.id.iv_play_arrow);
     videoProgressBar = findViewById(R.id.pb_video_loading);
+    favoriteAnimationView = findViewById(R.id.lav_favorite);
   }
 
   private void initReviewRecyclerView() {
@@ -127,6 +141,14 @@ public class MovieDetailActivity extends AppCompatActivity
     reviewRecyclerView.setAdapter(reviewAdapter);
     reviewRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     reviewRecyclerView.setHasFixedSize(true);
+  }
+
+  private void initMovieClickListener() {
+    movieCardView.setOnClickListener(v -> {
+      FavoriteDbHelper.insertFavoriteMovie(this, movie);
+      FavoriteUtils.updateFavoriteMovie(this, movie);
+      animateFavoriteView();
+    });
   }
 
   private void initVideoClickListener() {
@@ -174,6 +196,23 @@ public class MovieDetailActivity extends AppCompatActivity
   private void updateScrollViewPosition(int[] position) {
     if (position != null) {
       movieScrollView.post(() -> movieScrollView.scrollTo(position[0], position[1]));
+    }
+  }
+
+  void setupFavoriteAnimation(String movieTitle) {
+    boolean isFavorite = PreferenceManager.getDefaultSharedPreferences(this)
+      .getBoolean(movieTitle, false);
+    favoriteAnimationView.setProgress(isFavorite ? 1f : 0f);
+  }
+
+  private void animateFavoriteView() {
+    ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f).setDuration(1000);
+    animator.setInterpolator(new FastOutSlowInInterpolator());
+    animator.addUpdateListener(valueAnimator -> favoriteAnimationView.setProgress((Float) valueAnimator.getAnimatedValue()));
+    if (favoriteAnimationView.getProgress() == 0f) {
+      animator.start();
+    } else {
+      favoriteAnimationView.setProgress(0f);
     }
   }
 }

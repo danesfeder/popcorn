@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import com.danesfeder.popcorn.R;
 import com.danesfeder.popcorn.movies.detail.MovieDetailActivity;
 import com.danesfeder.popcorn.movies.favorite.FavoriteDbHelper;
+import com.danesfeder.popcorn.movies.favorite.FavoriteUtils;
 import com.danesfeder.popcorn.movies.favorite.MovieFavoritesActivity;
 import com.danesfeder.popcorn.movies.network.NetworkUtils;
 
@@ -86,7 +87,7 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
   @Override
   public void onMovieFavorite(Movie favoriteMovie) {
     FavoriteDbHelper.insertFavoriteMovie(this, favoriteMovie);
-    saveFavoriteMovie(favoriteMovie);
+    FavoriteUtils.updateFavoriteMovie(this, favoriteMovie);
   }
 
   @Override
@@ -175,13 +176,6 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
     Intent movieDetails = new Intent(this, MovieDetailActivity.class);
     movieDetails.putExtra(getString(R.string.movie_detail_extra), clickedMovie);
     startActivity(movieDetails);
-  }
-
-  private void saveFavoriteMovie(Movie favoriteMovie) {
-    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-    SharedPreferences.Editor editor = preferences.edit();
-    editor.putBoolean(favoriteMovie.getTitle(), true);
-    editor.apply();
   }
 
   private void launchFavoritesActivity() {
