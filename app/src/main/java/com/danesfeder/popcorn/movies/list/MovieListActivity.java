@@ -9,7 +9,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -38,12 +37,13 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_display_movies);
-    init(savedInstanceState != null);
+    init();
   }
 
   @Override
   protected void onResume() {
     super.onResume();
+    initListeners();
     refreshNavigationView();
   }
 
@@ -54,15 +54,18 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
   }
 
   @Override
-  protected void onRestoreInstanceState(Bundle savedInstanceState) {
-    super.onRestoreInstanceState(savedInstanceState);
-    movieAdapter.updateMovieList(savedInstanceState.getParcelableArrayList(getString(R.string.current_movie_list)));
-  }
-
-  @Override
   protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     outState.putParcelableArrayList(getString(R.string.current_movie_list), movieAdapter.getMovieList());
+    int position = ((GridLayoutManager) rvMovies.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+    outState.putInt("movie_list_position", position);
+  }
+
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+    rvMovies.scrollToPosition(savedInstanceState.getInt("movie_list_position"));
+    movieAdapter.updateMovieList(savedInstanceState.getParcelableArrayList(getString(R.string.current_movie_list)));
   }
 
   @Override
@@ -95,15 +98,11 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
     FavoriteDbHelper.deleteFavoriteMovie(this, favoriteMovieRemoved);
   }
 
-  private void init(boolean isConfigurationChange) {
+  private void init() {
     bind();
     initRecyclerView();
     initListeners();
     extractSharedPreferences();
-
-    if (!isConfigurationChange) {
-      fetchMovies(taskType);
-    }
   }
 
   /**
@@ -124,11 +123,9 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
     movieAdapter = new MovieAdapter(this);
     rvMovies.setAdapter(movieAdapter);
     rvMovies.setHasFixedSize(true);
-    if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-      rvMovies.setLayoutManager(new GridLayoutManager(this, 2));
-    } else {
-      rvMovies.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-    }
+    int configuration = getResources().getConfiguration().orientation;
+    int spanCount = configuration == Configuration.ORIENTATION_PORTRAIT ? 2 : 3;
+    rvMovies.setLayoutManager(new GridLayoutManager(this, spanCount));
   }
 
   /**
@@ -211,10 +208,12 @@ public class MovieListActivity extends AppCompatActivity implements FetchMoviesT
     = item -> {
     switch (item.getItemId()) {
       case R.id.navigation_popular:
+        if (movieAdapter.getItemCount() == 0 || taskType != FetchMoviesTask.POPULAR)
         fetchMovies(FetchMoviesTask.POPULAR);
         return true;
       case R.id.navigation_rating:
-        fetchMovies(FetchMoviesTask.TOP_RATED);
+        if (movieAdapter.getItemCount() == 0 || taskType != FetchMoviesTask.TOP_RATED)
+          fetchMovies(FetchMoviesTask.TOP_RATED);
         return true;
       case R.id.navigation_favorites:
         launchFavoritesActivity();
