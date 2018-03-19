@@ -21,11 +21,13 @@ class ReviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
   private TextView authorTextView;
   private TextView contentTextView;
   private ImageView arrowImageView;
+  private ReviewClickListener listener;
   private boolean isExpanded;
 
-  ReviewViewHolder(View itemView) {
+  ReviewViewHolder(View itemView, ReviewClickListener listener) {
     super(itemView);
     this.itemView = (ConstraintLayout) itemView;
+    this.listener = listener;
     authorTextView = itemView.findViewById(R.id.tv_author);
     contentTextView = itemView.findViewById(R.id.tv_content);
     arrowImageView = itemView.findViewById(R.id.iv_arrow);
@@ -34,6 +36,7 @@ class ReviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
 
   @Override
   public void onClick(View view) {
+    listener.onReviewClick(getAdapterPosition());
     isExpanded = isExpanded ? collapseView() : expandView();
   }
 
@@ -43,6 +46,15 @@ class ReviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
 
   void setContentText(String content) {
     contentTextView.setText(content);
+  }
+
+  void setExpanded(boolean isExpanded) {
+    this.isExpanded = isExpanded;
+    if (isExpanded) {
+      expandView();
+    } else {
+      collapseView();
+    }
   }
 
   private boolean expandView() {

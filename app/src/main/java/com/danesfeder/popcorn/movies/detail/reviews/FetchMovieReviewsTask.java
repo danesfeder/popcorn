@@ -10,14 +10,14 @@ import com.danesfeder.popcorn.movies.network.MovieService;
 import com.danesfeder.popcorn.movies.network.NetworkConstants;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class FetchMovieReviewsTask extends AsyncTask<Void, Void, List<Review>> {
+public class FetchMovieReviewsTask extends AsyncTask<Void, Void, ArrayList<Review>> {
 
   private static String LOG_TAG = FetchMovieReviewsTask.class.getSimpleName();
 
@@ -32,7 +32,7 @@ public class FetchMovieReviewsTask extends AsyncTask<Void, Void, List<Review>> {
   }
 
   @Override
-  protected List<Review> doInBackground(Void... voids) {
+  protected ArrayList<Review> doInBackground(Void... voids) {
 
     Retrofit retrofit = new Retrofit.Builder()
       .baseUrl(NetworkConstants.MOVIE_DB_BASE_URL)
@@ -61,7 +61,7 @@ public class FetchMovieReviewsTask extends AsyncTask<Void, Void, List<Review>> {
   }
 
   @Override
-  protected void onPostExecute(List<Review> reviews) {
+  protected void onPostExecute(ArrayList<Review> reviews) {
     if (reviews == null || reviews.isEmpty()) {
       Log.e(LOG_TAG, "Review list is null or empty");
       listener.onReviewsEmpty();
@@ -72,7 +72,7 @@ public class FetchMovieReviewsTask extends AsyncTask<Void, Void, List<Review>> {
   }
 
   public interface MovieReviewsLoadedListener {
-    void onReviewsLoaded(List<Review> reviews);
+    void onReviewsLoaded(ArrayList<Review> reviews);
 
     void onReviewsEmpty();
   }

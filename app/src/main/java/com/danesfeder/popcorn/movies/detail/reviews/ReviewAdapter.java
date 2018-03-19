@@ -10,7 +10,7 @@ import com.danesfeder.popcorn.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReviewAdapter extends RecyclerView.Adapter<ReviewViewHolder> {
+public class ReviewAdapter extends RecyclerView.Adapter<ReviewViewHolder> implements ReviewClickListener {
 
   private List<Review> reviewList = new ArrayList<>();
 
@@ -18,7 +18,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewViewHolder> {
   public ReviewViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
       .inflate(R.layout.review_viewholder_layout, parent, false);
-    return new ReviewViewHolder(view);
+    return new ReviewViewHolder(view, this);
   }
 
   @Override
@@ -26,11 +26,19 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewViewHolder> {
     Review review = reviewList.get(position);
     holder.setAuthorText(review.getAuthor());
     holder.setContentText(review.getContent());
+    holder.setExpanded(review.isExpanded());
   }
 
   @Override
   public int getItemCount() {
     return reviewList.size();
+  }
+
+  @Override
+  public void onReviewClick(int position) {
+    Review review = reviewList.get(position);
+    boolean isExpanded = !review.isExpanded();
+    review.setExpanded(isExpanded);
   }
 
   public void updateReviewList(List<Review> reviews) {

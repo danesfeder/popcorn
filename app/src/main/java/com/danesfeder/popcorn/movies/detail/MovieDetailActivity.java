@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,20 +16,22 @@ import android.widget.TextView;
 
 import com.danesfeder.popcorn.R;
 import com.danesfeder.popcorn.movies.detail.reviews.FetchMovieReviewsTask;
+import com.danesfeder.popcorn.movies.detail.reviews.Review;
 import com.danesfeder.popcorn.movies.detail.reviews.ReviewAdapter;
 import com.danesfeder.popcorn.movies.detail.videos.FetchMovieVideosTask;
-import com.danesfeder.popcorn.movies.list.Movie;
-import com.danesfeder.popcorn.movies.detail.reviews.Review;
 import com.danesfeder.popcorn.movies.detail.videos.Video;
+import com.danesfeder.popcorn.movies.list.Movie;
 import com.danesfeder.popcorn.movies.network.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieDetailActivity extends AppCompatActivity
   implements FetchMovieReviewsTask.MovieReviewsLoadedListener,
   FetchMovieVideosTask.MovieVideosLoadedListener {
 
+  private NestedScrollView movieScrollView;
   private ImageView moviePosterImageView;
   private ImageView movieBackdropImageView;
   private TextView movieTitleTextView;
@@ -40,7 +43,8 @@ public class MovieDetailActivity extends AppCompatActivity
   private ProgressBar reviewProgressBar;
   private FloatingActionButton videoPlayBtn;
   private ProgressBar videoProgressBar;
-  private List<Video> videos;
+  private ArrayList<Review> reviews;
+  private ArrayList<Video> videos;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +59,34 @@ public class MovieDetailActivity extends AppCompatActivity
 
     if (NetworkUtils.checkInternetConnection(this)) {
       loadMovieImages(movie);
-      loadMovieReviews(movie);
-      loadMovieVideos(movie);
+      if (savedInstanceState == null) {
+        loadMovieReviews(movie);
+        loadMovieVideos(movie);
+      }
     }
   }
 
   @Override
-  public void onReviewsLoaded(List<Review> reviews) {
+  protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putParcelableArrayList(getString(R.string.detail_review_list), reviews);
+    outState.putParcelableArrayList(getString(R.string.detail_video_list), videos);
+    outState.putIntArray(getString(R.string.detail_scroll_view_position),
+      new int[] {movieScrollView.getScrollX(), movieScrollView.getScrollY()});
+  }
+
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+    onReviewsLoaded(savedInstanceState.getParcelableArrayList(getString(R.string.detail_review_list)));
+    onVideosLoaded(savedInstanceState.getParcelableArrayList(getString(R.string.detail_video_list)));
+    final int[] position = savedInstanceState.getIntArray(getString(R.string.detail_scroll_view_position));
+    updateScrollViewPosition(position);
+  }
+
+  @Override
+  public void onReviewsLoaded(ArrayList<Review> reviews) {
+    this.reviews = reviews;
     reviewProgressBar.setVisibility(View.GONE);
     reviewAdapter.updateReviewList(reviews);
   }
@@ -72,7 +97,7 @@ public class MovieDetailActivity extends AppCompatActivity
   }
 
   @Override
-  public void onVideosLoaded(List<Video> videos) {
+  public void onVideosLoaded(ArrayList<Video> videos) {
     this.videos = videos;
     videoProgressBar.setVisibility(View.GONE);
     videoPlayBtn.show();
@@ -84,6 +109,7 @@ public class MovieDetailActivity extends AppCompatActivity
   }
 
   private void bind() {
+    movieScrollView = findViewById(R.id.sv_movie_detail);
     moviePosterImageView = findViewById(R.id.iv_movie_poster);
     movieBackdropImageView = findViewById(R.id.iv_movie_backdrop);
     movieTitleTextView = findViewById(R.id.tv_movie_date);
@@ -142,6 +168,12 @@ public class MovieDetailActivity extends AppCompatActivity
           Uri.parse("http://www.youtube.com/watch?v=" + video.getKey())));
         break;
       }
+    }
+  }
+
+  private void updateScrollViewPosition(int[] position) {
+    if (position != null) {
+      movieScrollView.post(() -> movieScrollView.scrollTo(position[0], position[1]));
     }
   }
 }

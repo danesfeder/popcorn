@@ -10,14 +10,14 @@ import com.danesfeder.popcorn.movies.network.MovieService;
 import com.danesfeder.popcorn.movies.network.NetworkConstants;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class FetchMovieVideosTask extends AsyncTask<Void, Void, List<Video>> {
+public class FetchMovieVideosTask extends AsyncTask<Void, Void, ArrayList<Video>> {
 
   private static String LOG_TAG = FetchMovieVideosTask.class.getSimpleName();
 
@@ -32,7 +32,7 @@ public class FetchMovieVideosTask extends AsyncTask<Void, Void, List<Video>> {
   }
 
   @Override
-  protected List<Video> doInBackground(Void... voids) {
+  protected ArrayList<Video> doInBackground(Void... voids) {
 
     Retrofit retrofit = new Retrofit.Builder()
       .baseUrl(NetworkConstants.MOVIE_DB_BASE_URL)
@@ -61,7 +61,7 @@ public class FetchMovieVideosTask extends AsyncTask<Void, Void, List<Video>> {
   }
 
   @Override
-  protected void onPostExecute(List<Video> videos) {
+  protected void onPostExecute(ArrayList<Video> videos) {
     if (videos == null || videos.isEmpty()) {
       Log.e(LOG_TAG, "Video list is null or empty");
       listener.onVideosEmpty();
@@ -72,7 +72,7 @@ public class FetchMovieVideosTask extends AsyncTask<Void, Void, List<Video>> {
   }
 
   public interface MovieVideosLoadedListener {
-    void onVideosLoaded(List<Video> videos);
+    void onVideosLoaded(ArrayList<Video> videos);
 
     void onVideosEmpty();
   }
