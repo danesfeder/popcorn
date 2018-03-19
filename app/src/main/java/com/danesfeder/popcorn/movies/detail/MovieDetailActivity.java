@@ -104,9 +104,7 @@ public class MovieDetailActivity extends AppCompatActivity
   }
 
   private void initVideoClickListener() {
-    videoPlayBtn.setOnClickListener(view -> {
-      playVideo(videos);
-    });
+    videoPlayBtn.setOnClickListener(view -> playVideo(videos));
   }
 
   private void setMovieDetails(Movie movie) {
