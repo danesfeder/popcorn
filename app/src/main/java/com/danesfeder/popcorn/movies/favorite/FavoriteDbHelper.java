@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import android.widget.Toast;
 
 import com.danesfeder.popcorn.movies.list.Movie;
 
@@ -48,19 +47,12 @@ public class FavoriteDbHelper extends SQLiteOpenHelper {
     contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_POSTER_URL, favoriteMovie.getPosterUrl(context));
     contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_RATING, favoriteMovie.getRating());
     contentValues.put(FavoriteContract.FavoriteEntry.COLUMN_RELEASE_DATE, favoriteMovie.getReleaseDate());
-
-    Uri uri = context.getContentResolver().insert(FavoriteContract.FavoriteEntry.CONTENT_URI, contentValues);
-    if (uri != null) {
-      Toast.makeText(context, uri.toString(), Toast.LENGTH_LONG).show();
-    }
+    context.getContentResolver().insert(FavoriteContract.FavoriteEntry.CONTENT_URI, contentValues);
   }
 
   public static void deleteFavoriteMovie(Context context, Movie favoriteMovieRemoved) {
     String movieId = String.valueOf(favoriteMovieRemoved.getId());
     Uri uriDeleteMovie = FavoriteContract.FavoriteEntry.CONTENT_URI.buildUpon().appendPath(movieId).build();
-    int result = context.getContentResolver().delete(uriDeleteMovie, null, null);
-    if (result > 0) {
-      Toast.makeText(context, "Successfully deleted: " + favoriteMovieRemoved.getTitle(), Toast.LENGTH_LONG).show();
-    }
+    context.getContentResolver().delete(uriDeleteMovie, null, null);
   }
 }
